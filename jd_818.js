@@ -49,11 +49,7 @@ if ($.isNode()) {
 }
 
 const JD_API_HOST = 'https://rdcseason.m.jd.com/api/';
-<<<<<<< HEAD
-const activeEndTime = '2020/11/13 01:00:00';
-=======
 const activeEndTime = '2020/11/13 01:00:00+08:00';
->>>>>>> upstream/master
 const addUrl = 'http://jd.turinglabs.net/helpcode/create/';
 const printUrl = `http://jd.turinglabs.net/helpcode/print/20/`;
 let helpCode = []
@@ -74,14 +70,6 @@ let helpCode = []
       console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/`, {"open-url": "https://bean.m.jd.com/"});
-<<<<<<< HEAD
-        $.setdata('', `CookieJD${i ? i + 1 : "" }`);//cookie失效，故清空cookie。
-        if ($.isNode()) await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-        continue
-      }
-      message = '';
-      subTitle = '';
-=======
 
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
@@ -90,7 +78,6 @@ let helpCode = []
         }
         continue
       }
->>>>>>> upstream/master
       await JD818();
       // await getHelp();
       // await doHelp();
@@ -921,12 +908,8 @@ function TotalBean() {
   })
 }
 async function showMsg() {
-<<<<<<< HEAD
-  if (Date.now() > new Date(activeEndTime).getTime()) {
-=======
   let nowTime = new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000;
   if (nowTime > new Date(activeEndTime).getTime()) {
->>>>>>> upstream/master
     $.msg($.name, '活动已结束', `该活动累计获得京豆：${$.jbeanCount}个\niOS用户请删除此脚本\ngithub action用户请删除.github/workflows/jd_818.yml文件\n如果帮助到您可以点下🌟STAR鼓励我一下,谢谢\n咱江湖再见\nhttps://github.com/lxk0301/jd_scripts`, {"open-url": "https://github.com/lxk0301/jd_scripts"});
     if ($.isNode()) await notify.sendNotify($.name + '活动已结束', `请删除此脚本\ngithub action用户请删除.github/workflows/jd_818.yml文件\n如果帮助到您可以点下🌟STAR鼓励我一下,谢谢\n咱江湖再见\n https://github.com/lxk0301/jd_scripts`)
   } else {

@@ -1,13 +1,13 @@
 # File: .github/workflows/repo-sync.yml
 name: sync-lxk0301-scripts
 on:
-  schedule:
-    - cron: '1 0,15 * * *'
+  #schedule:
+  #  - cron: '1 0,15 * * *'
   workflow_dispatch:
-  watch:
-    types: started
-  repository_dispatch:
-    types: sync-lxk0301-scripts
+  #watch:
+  #  types: started
+  #repository_dispatch:
+  #  types: sync-lxk0301-scripts
 jobs:
   repo-sync:
     env:

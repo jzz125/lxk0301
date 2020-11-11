@@ -25,11 +25,7 @@
  京东星推官 = type=cron,cronexp=2 0 * * *,wake-system=1,timeout=320,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_xtg.js
  */
 const $ = new Env('京东星推官');
-<<<<<<< HEAD
-const activeEndTime = '2020/11/12 23:59:59';//活动结束时间
-=======
 const activeEndTime = '2020/11/12 23:59:59+08:00';//活动结束时间
->>>>>>> upstream/master
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
