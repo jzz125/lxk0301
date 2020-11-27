@@ -2,7 +2,25 @@
 京东京喜工厂
 活动入口 :京东APP->游戏与互动->查看更多->京喜工厂
 或者: 京东APP首页搜索 "玩一玩" ,造物工厂即可
-cron 15 * * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js
+
+
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#京喜工厂
+10 * * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js, tag=京喜工厂, enabled=true
+ 
+================Loon==============
+[Script]
+cron "10 * * * *" script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js,tag=京喜工厂
+ 
+===============Surge=================
+京喜工厂 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js
+ 
+============小火箭=========
+京喜工厂 = type=cron,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js, cronexpr="10 * * * *", timeout=200, enable=true
+
  */
 
 
@@ -16,6 +34,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 
 let cookiesArr = [], cookie = '';
+const inviteCodes = ['V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k='];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -70,6 +89,7 @@ if ($.isNode()) {
 async function jdDreamFactory() {
   ele = 0;
   await userInfo();
+  await helpFriends(inviteCodes)
   if ($.unActive) return
   await getUserElectricity();
   await taskList();
@@ -82,10 +102,12 @@ async function jdDreamFactory() {
 
 
 // 收取发电机的电力
-function collectElectricity(facId = factoryId, help = false) {
+function collectElectricity(facId = factoryId, help = false, master = '') {
   return new Promise(async resolve => {
-    const url = `/dreamfactory/generator/CollectCurrentElectricity?zone=dream_factory&apptoken=&pgtimestamp=&phoneID=&factoryid=${facId}&doubleflag=1&sceneval=2&g_login_type=1`;
-
+    let url = `/dreamfactory/generator/CollectCurrentElectricity?zone=dream_factory&apptoken=&pgtimestamp=&phoneID=&factoryid=${facId}&doubleflag=1&sceneval=2&g_login_type=1`;
+    if (help && master) {
+      url = `/dreamfactory/generator/CollectCurrentElectricity?zone=dream_factory&factoryid=${facId}&master=${master}&sceneval=2&g_login_type=1`;
+    }
     $.get(taskurl(url), (err, resp, data) => {
       try {
         if (err) {
@@ -107,7 +129,7 @@ function collectElectricity(facId = factoryId, help = false) {
               }
 
             } else {
-              // console.log(data)
+              console.log(data.msg)
             }
           } else {
             console.log(`京东服务器返回空数据`)
@@ -268,7 +290,7 @@ function hireAward() {
               message += `【打工电力】：收取成功\n`
             } else {
               console.log(`打工电力：收取失败，${data.msg}`)
-              message += `【打工电力】：收取失败，${data.msg}\n`
+              message += `【打工电力】收取失败，${data.msg}\n`
             }
           } else {
             console.log(`京东服务器返回空数据`)
@@ -282,12 +304,18 @@ function hireAward() {
     })
   })
 }
-
+async function helpFriends(codes) {
+  for (let code of codes) {
+    if (code) {
+      await assistFriend(code);
+    }
+  }
+}
 // 帮助用户
 function assistFriend(sharepin) {
 
   return new Promise(async resolve => {
-    const url = `/dreamfactory/friend/AssistFriend?zone=dream_factory&sharepin=${sharepin}&sceneval=2&g_login_type=1`
+    const url = `/dreamfactory/friend/AssistFriend?zone=dream_factory&sharepin=${escape(sharepin)}&sceneval=2&g_login_type=1`
     $.get(taskurl(url), async (err, resp, data) => {
       try {
         if (err) {
@@ -299,7 +327,7 @@ function assistFriend(sharepin) {
             if (data['ret'] === 0) {
               console.log(`助力朋友：${sharepin}成功`)
             } else {
-              console.log(`助力朋友：${data.msg}`)
+              console.log(`助力朋友[${sharepin}]失败：${data.msg}`)
             }
           } else {
             console.log(`京东服务器返回空数据`)
@@ -386,7 +414,7 @@ function doTask(taskId) {
 function userInfo() {
   return new Promise(async resolve => {
     const url = `/dreamfactory/userinfo/GetUserInfo?zone=dream_factory&pin=&sharePin=&shareType=&materialTuanPin=&materialTuanId=&sceneval=2`;
-    $.get(taskurl(url), (err, resp, data) => {
+    $.get(taskurl(url), async (err, resp, data) => {
       data = JSON.parse(data);
       if (data['ret'] === 0) {
         data = data['data'];
@@ -396,36 +424,83 @@ function userInfo() {
           factoryId = factory.factoryId;//工厂ID
           productionId = production.productionId;//商品ID
           subTitle = data.user.pin;
+          await GetCommodityDetails(production.commodityDimId);
+          await DrawProductionStagePrize(productionId);
           console.log(`当前电力：${data.user.electric}`)
           console.log(`分享码: ${data.user.encryptPin}`);
           console.log(`生产进度：${(production.investedElectric / production.needElectric).toFixed(2) * 100}%`);
+          message += `【京东账号${$.index}】${$.nickName}\n`
+          message += `【生产商品】${$.productName}\n`;
           message += `【生产进度】${((production.investedElectric / production.needElectric) * 100).toFixed(2)}%\n`;
+          if (production.investedElectric >= production.needElectric) {
+            $.msg($.name, ``, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}\n已生产完,请速去兑换`, {'open-url': 'openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D'})
+            await notify.sendNotify(`${$.name} - 京东账号${$.index} - ${$.nickName}`, `【京东账号${$.index}】${$.nickName}\n【生产商品】${$.productName}\n已生产完,请速去兑换`)
+          }
         } else {
-          $.unActive = true;//标记是否开启了此活动
-          console.log('【提示】此账号京喜工厂活动未开始\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 开启活动\n');
-          $.msg($.name, '', `【提示】此账号[${$.nickName}]京喜工厂活动未开始\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 开启活动`);
+          $.unActive = true;//标记是否开启了京喜活动或者选购了商品进行生产
+          if (!data.factoryList) {
+            console.log('【提示】此账号京喜工厂活动未开始\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 开启活动\n');
+            $.msg($.name, '', `【提示】此账号[${$.nickName}]京喜工厂活动未开始\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 开启活动`);
+          } else if (data.factoryList && !data.productionList) {
+            console.log(`【提示】此账号京喜工厂未选购商品\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 选购\n`)
+            $.msg($.name, '', `【提示】此账号[${$.nickName}]京喜工厂未选择商品\n请手动去京东APP->游戏与互动->查看更多->京喜工厂 选择商品`);
+          }
         }
       }
       resolve()
     })
   })
 }
-
-
+//查询当前生产的商品名称
+function GetCommodityDetails(commodityDimId) {
+  return new Promise(async resolve => {
+    const url = `/dreamfactory/diminfo/GetCommodityDetails?zone=dream_factory&sceneval=2&g_login_type=1&commodityId=${commodityDimId}`;
+    $.get(taskurl(url), (err, resp, data) => {
+      data = JSON.parse(data);
+      if (data['ret'] === 0) {
+        data = data['data'];
+        $.productName = data['commodityList'][0].name;
+      }
+      resolve()
+    })
+  })
+}
+//领取红包
+function DrawProductionStagePrize(productionId) {
+  return new Promise(async resolve => {
+    const url = `/dreamfactory/userinfo/DrawProductionStagePrize?zone=dream_factory&sceneval=2&g_login_type=1&productionId=${productionId}`;
+    $.get(taskurl(url), (err, resp, data) => {
+      console.log(`领取红包(测试中)结果：${data}`)
+      data = JSON.parse(data);
+      if (data['ret'] === 0) {
+        // data = data['data'];
+        // $.productName = data['commodityList'][0].name;
+      }
+      resolve()
+    })
+  })
+}
 function stealFriend() {
   return new Promise(async resolve => {
     const url = `//dreamfactory/friend/QueryFactoryManagerList?zone=dream_factory&sceneval=2`;
-    $.get(taskurl(url), (err, resp, data) => {
+    $.get(taskurl(url), async (err, resp, data) => {
       data = JSON.parse(data);
       if (data['ret'] === 0) {
         data = data['data'];
         for (let i = 0; i < data.list.length; ++i) {
           let pin = data.list[i]['encryptPin'];
-          getFactoryIdByPin(pin).then(async (facId) => {
-            await collectElectricity(facId,true)
-          }).catch(err => {
-
-          })
+          if (data.list[i]['collectFlag'] === 1) {
+            //只有collectFlag为1的时候,才能偷取好友电力
+            const facId = await getFactoryIdByPin(pin);
+            if (facId) await collectElectricity(facId,true, data.list[i]['key'])
+            // getFactoryIdByPin(pin).then(async (facId) => {
+            //   if (facId) await collectElectricity(facId,true)
+            // }).catch(err => {
+            //
+            // })
+          } else {
+            console.log(`此好友[${pin}]暂不能被你收取电力`)
+          }
         }
       }
       resolve()
@@ -439,7 +514,12 @@ function getFactoryIdByPin(pin) {
     $.get(taskurl(url), (err, resp, data) => {
       data = JSON.parse(data);
       if (data['ret'] === 0) {
-        resolve(data['data']['factoryList'][0]['factoryId'])
+        if (data.data.factoryList) {
+          //做此判断,有时候返回factoryList为null
+          resolve(data['data']['factoryList'][0]['factoryId'])
+        } else {
+          resolve();
+        }
       } else {
         reject()
       }

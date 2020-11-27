@@ -1,8 +1,8 @@
 /*
  * @Author: lxk0301 https://github.com/lxk0301 
  * @Date: 2020-11-12 11:42:12 
- * @Last Modified by:   lxk0301 
- * @Last Modified time: 2020-11-22 15:42:12
+ * @Last Modified by: lxk0301
+ * @Last Modified time: 2020-11-23 12:27:20
  */
 /*
 东东小窝 https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_small_home.js
@@ -27,7 +27,7 @@ https://h5.m.jd.com/babelDiy/Zeus/2HFSytEAN99VPmMGZ6V4EYWus1x/index.html
 ===============Quantumultx===============
 [task_local]
 #东东小窝
-16 0 * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_small_home.js, tag=东东小窝, enabled=true
+16 0 * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_small_home.js, tag=东东小窝, img-url=https://raw.githubusercontent.com/58xinian/icon/master/ddxw.png  enabled=true
 
 ================Loon==============
 [Script]
@@ -46,6 +46,7 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = '';
+let isPurchaseShops = false;//是否一键加购商品到购物车，默认不加购
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -56,7 +57,7 @@ if ($.isNode()) {
 }
 
 const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
-const inviteCodes = ['1330186694770339842', '1330185661529935874'];
+
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
@@ -144,30 +145,36 @@ function queryByUserId() {
     })
   })
 }
-async function doChannelsListTask(taskId) {
+async function doChannelsListTask(taskId, taskType) {
   await queryChannelsList(taskId);
   for (let item of $.queryChannelsList) {
-    if (item.showOrder !== 1) {
+    if (item.showOrder === 1) {
       await $.wait(1000)
       await followChannel(taskId, item.id)
-      await queryDoneTaskRecord(taskId);
+      await queryDoneTaskRecord(taskId, taskType);
     }
   }
 }
 async function helpFriends() {
-  for (let item of inviteCodes) {
+  await updateInviteCode();
+  if (!$.updatePkActivityIdRes) await updateInviteCodeCDN();
+  for (let item of $.inviteCodes.inviteCode) {
     if (!item) continue
     await createAssistUser(item, $.createAssistUserID || "1318106976846299138");
   }
 }
 async function doAllTask() {
   await queryAllTaskInfo();//获取任务详情列表$.taskList
+  console.log(` 任务名称   完成进度 `)
+  for (let item of $.taskList) {
+    console.log(`${item.ssjjTaskInfo.name}      ${item.doneNum}/${item.ssjjTaskInfo.awardOfDayNum || (item.ssjjTaskInfo.type === 1 ? 4: 1)}`)
+  }
   for (let item of $.taskList) {
     if (item.ssjjTaskInfo.type === 1) {
       //邀请好友助力自己
       // await createAssistUser('1330186694770339842', item.ssjjTaskInfo.id)
       $.createAssistUserID = item.ssjjTaskInfo.id;
-      console.log(`助力您的好友:${item.doneNum}人`)
+      console.log(`\n\n助力您的好友:${item.doneNum}人`)
     }
     if (item.ssjjTaskInfo.type === 2) {
       //每日打卡
@@ -186,17 +193,35 @@ async function doAllTask() {
       for (let i = 0; i < new Array(item.ssjjTaskInfo.awardOfDayNum || 1).fill('').length; i++) {
         await game(item.ssjjTaskInfo.id, item.doneNum);
       }
-      // await game(item.ssjjTaskInfo.id, item.doneNum);
-      // await doAllTask();
     }
-
+    if (item.ssjjTaskInfo.type === 4) {
+      //关注店铺
+      if (item.doneNum === item.ssjjTaskInfo.awardOfDayNum) {
+        console.log(`${item.ssjjTaskInfo.name}已完成[${item.doneNum}/${item.ssjjTaskInfo.awardOfDayNum}]`)
+        continue
+      }
+      for (let i = 0; i < new Array(item.ssjjTaskInfo.awardOfDayNum).fill('').length; i++) {
+        await followShops('followShops', item.ssjjTaskInfo.id);//一键关注店铺
+        await queryDoneTaskRecord(item.ssjjTaskInfo.id, item.ssjjTaskInfo.type);
+      }
+    }
+    if (item.ssjjTaskInfo.type === 5) {
+      //浏览店铺
+      if (item.doneNum === item.ssjjTaskInfo.awardOfDayNum) {
+        console.log(`${item.ssjjTaskInfo.name}已完成[${item.doneNum}/${item.ssjjTaskInfo.awardOfDayNum}]`)
+        continue
+      }
+      for (let i = 0; i < new Array(item.ssjjTaskInfo.awardOfDayNum).fill('').length; i++) {
+        await browseChannels('browseShops', item.ssjjTaskInfo.id, item.browseId);
+      }
+    }
     if (item.ssjjTaskInfo.type === 6) {
       //关注4个频道
       if (item.doneNum === item.ssjjTaskInfo.awardOfDayNum) {
         console.log(`${item.ssjjTaskInfo.name}已完成[${item.doneNum}/${item.ssjjTaskInfo.awardOfDayNum}]`)
         continue
       }
-      await doChannelsListTask(item.ssjjTaskInfo.id)
+      await doChannelsListTask(item.ssjjTaskInfo.id, item.ssjjTaskInfo.type)
     }
     if (item.ssjjTaskInfo.type === 7) {
       //浏览3个频道
@@ -207,8 +232,28 @@ async function doAllTask() {
       for (let i = 0; i < new Array(item.ssjjTaskInfo.awardOfDayNum || 1).fill('').length; i++) {
         await browseChannels('browseChannels', item.ssjjTaskInfo.id, item.browseId);
       }
-      // await browseChannels('browseChannels', item.ssjjTaskInfo.id, item.browseId);
-      // await doAllTask();
+    }
+    isPurchaseShops = $.isNode() ? (process.env.PURCHASE_SHOPS ? process.env.PURCHASE_SHOPS : isPurchaseShops) : ($.getdata("isPurchaseShops") ? $.getdata("isPurchaseShops") : isPurchaseShops);
+    if (isPurchaseShops && item.ssjjTaskInfo.type === 9) {
+      //加购商品
+      if (item.doneNum === item.ssjjTaskInfo.awardOfDayNum) {
+        console.log(`${item.ssjjTaskInfo.name}已完成[${item.doneNum}/${item.ssjjTaskInfo.awardOfDayNum}]`)
+        continue
+      }
+      for (let i = 0; i < new Array(item.ssjjTaskInfo.awardOfDayNum).fill('').length; i++) {
+        await followShops('purchaseCommodities', item.ssjjTaskInfo.id);//一键加购商品
+        await queryDoneTaskRecord(item.ssjjTaskInfo.id, item.ssjjTaskInfo.type);
+      }
+    }
+    if (item.ssjjTaskInfo.type === 10) {
+      //浏览商品
+      if (item.doneNum === item.ssjjTaskInfo.awardOfDayNum) {
+        console.log(`${item.ssjjTaskInfo.name}已完成[${item.doneNum}/${item.ssjjTaskInfo.awardOfDayNum}]`)
+        continue
+      }
+      for (let i = 0; i < new Array(item.ssjjTaskInfo.awardOfDayNum).fill('').length; i++) {
+        await browseChannels('browseCommodities', item.ssjjTaskInfo.id, item.browseId);
+      }
     }
     if (item.ssjjTaskInfo.type === 11) {
       //浏览会场
@@ -250,7 +295,8 @@ function queryChannelsList(taskId) {
     })
   })
 }
-//浏览频道，浏览会场API
+
+//浏览频道，浏览会场，浏览商品，浏览店铺API
 function browseChannels(functionID ,taskId, browseId) {
   return new Promise(resolve => {
     $.get(taskUrl(`/ssjj-task-record/${functionID}/${taskId}/${browseId}`), (err, resp, data) => {
@@ -260,7 +306,7 @@ function browseChannels(functionID ,taskId, browseId) {
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (safeGet(data)) {
-            console.log(`${functionID === 'browseChannels' ? '浏览频道' : '浏览会场'}`, data)
+            console.log(`${functionID === 'browseChannels' ? '浏览频道' : functionID === 'browseMeetings' ? '浏览会场' : functionID === 'browseShops' ? '浏览店铺' : '浏览商品'}`, data)
             data = JSON.parse(data);
             if (data.head.code === 200) {
               if (data.body) {
@@ -278,9 +324,9 @@ function browseChannels(functionID ,taskId, browseId) {
   })
 }
 //记录已关注的频道
-function queryDoneTaskRecord(taskId) {
+function queryDoneTaskRecord(taskId, taskType) {
   return new Promise(resolve => {
-    $.get(taskUrl(`/ssjj-task-record/queryDoneTaskRecord/6/${taskId}`), (err, resp, data) => {
+    $.get(taskUrl(`/ssjj-task-record/queryDoneTaskRecord/${taskType}/${taskId}`), (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -290,6 +336,33 @@ function queryDoneTaskRecord(taskId) {
             data = JSON.parse(data);
             if (data.head.code === 200) {
               if (data.body) {
+                // message += `【限时连连看】成功，活动${awardWoB}WO币\n`;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+  })
+}
+//一键关注店铺，一键加购商品API
+function followShops(functionID, taskId) {
+  return new Promise(async resolve => {
+    $.get(taskUrl(`/ssjj-task-record/${functionID}/${taskId}`), (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data);
+            if (data.head.code === 200) {
+              if (data.body) {
+                console.log(`${functionID === 'followShops'? '一键关注店铺': '一键加购商品'}结果：${data.head.msg}`);
                 // message += `【限时连连看】成功，活动${awardWoB}WO币\n`;
               }
             }
@@ -342,7 +415,7 @@ function createInviteUser() {
             if (data.head.code === 200) {
               if (data.body) {
                 if (data.body.id) {
-                  console.log(`\n您的${$.name}shareCode:【${data.body.id}】\n`);
+                  console.log(`\n您的${$.name}shareCode(每天都是变化的):【${data.body.id}】\n`);
                   $.shareCode = data.body.id;
                 }
               }
@@ -556,7 +629,7 @@ function loginHome() {
         "Host": "jdhome.m.jd.com",
         "Origin": "https://jdhome.m.jd.com",
         "Referer": "https://jdhome.m.jd.com/dist/taro/index.html/",
-        "User-Agent": "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0",
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
       }
     }
     $.post(options, async (err, resp, data) => {
@@ -598,7 +671,7 @@ function login(userName) {
         "Host": "lkyl.dianpusoft.cn",
         "Origin": "https://lkyl.dianpusoft.cn",
         "Referer": "https://h5.m.jd.com/babelDiy/Zeus/2HFSytEAN99VPmMGZ6V4EYWus1x/index.html",
-        "User-Agent": "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0",
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
       }
     }
     $.post(options, async (err, resp, data) => {
@@ -620,6 +693,41 @@ function login(userName) {
     })
   })
 }
+function updateInviteCode(url = 'https://raw.githubusercontent.com/lxk0301/updateTeam/master/jd_updateSmallHomeInviteCode.json') {
+  return new Promise(resolve => {
+    $.get({url}, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+        } else {
+          $.inviteCodes = JSON.parse(data);
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+function updateInviteCodeCDN(url = 'https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateSmallHomeInviteCode.json') {
+  return new Promise(resolve => {
+    $.get({url}, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          $.inviteCodes = JSON.parse(data);
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
 function taskUrl(url, body = {}) {
   return {
     url: `${JD_API_HOST}/${url}?body=${escape(body)}`,
@@ -632,7 +740,7 @@ function taskUrl(url, body = {}) {
       "Host": "lkyl.dianpusoft.cn",
       "Referer": "https://h5.m.jd.com/babelDiy/Zeus/2HFSytEAN99VPmMGZ6V4EYWus1x/index.html",
       "token": $.token,
-      "User-Agent": "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"
+      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
     }
   }
 }
@@ -648,7 +756,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
       }
     }
     $.post(options, (err, resp, data) => {
