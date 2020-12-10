@@ -311,6 +311,7 @@ async function businessCircleActivity() {
       console.log(`\n注：PK会在每天的七点自动随机加入lxk0301创建的队伍\n`)
       await updatePkActivityId();
       if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN();
+      if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateTeam.json');
       console.log(`\nupdatePkActivityId[pkActivityId]:::${$.updatePkActivityIdRes.pkActivityId}`);
       console.log(`\n京东服务器返回的[pkActivityId] ${pkActivityId}`);
       if ($.updatePkActivityIdRes && ($.updatePkActivityIdRes.pkActivityId === pkActivityId)) {
@@ -720,7 +721,7 @@ function updatePkActivityId(url = 'https://raw.githubusercontent.com/lxk0301/upd
   })
 }
 function updatePkActivityIdCDN(url = 'https://raw.fastgit.org/lxk0301/updateTeam/master/jd_updateTeam.json') {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     //https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateTeam.json
     //https://raw.githubusercontent.com/lxk0301/updateTeam/master/jd_updateTeam.json
     $.get({url}, async (err, resp, data) => {
@@ -737,6 +738,8 @@ function updatePkActivityIdCDN(url = 'https://raw.fastgit.org/lxk0301/updateTeam
         resolve();
       }
     })
+    await $.wait(3000)
+    resolve();
   })
 }
 function smtgDoShopTask(taskId, itemId) {

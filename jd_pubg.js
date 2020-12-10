@@ -1,35 +1,128 @@
 /*
-数码加购京豆
+PUBG ,运行时间会比较久,Surge请加大timeout时间
 脚本会给内置的码进行助力
-共计25京豆，一天运行一次即可
-活动时间：2020-12-4 到 2020-12-11
-活动入口：https://prodev.m.jd.com/mall/active/nKxVyPnuLwAsQSTfidZ9z4RKVZy/index.html#/
-更新地址：https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_digital_floor.js
-已支持IOS双京东账号, Node.js支持N个京东账号
-脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
+活动于2020-12-13日结束
+活动地址：https://starsingle.m.jd.com/static/index.html#/?fromChangeSkinNum=PUBG
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
-#数码加购京豆
-10 7 * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_digital_floor.js, tag=数码加购京豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_redPacket.png, enabled=true
+#PUBG
+10 0 * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_pubg.js, tag=PUBG, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 7 * * *" script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_digital_floor.js, tag=数码加购京豆
+cron "10 0 * * *" script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_pubg.js,tag=PUBG
 
 ===============Surge=================
-数码加购京豆 = type=cron,cronexp="10 7 * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_digital_floor.js
+PUBG = type=cron,cronexp="10 0 * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_pubg.js
 
 ============小火箭=========
-数码加购京豆 = type=cron,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_digital_floor.js, cronexpr="10 7 * * *", timeout=200, enable=true
+PUBG = type=cron,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_pubg.js, cronexpr="10 0 * * *", timeout=200, enable=true
  */
-const $ = new Env('数码加购京豆');
+const $ = new Env('PUBG');
+!function(n) {
+  "use strict";
+  function t(n, t) {
+    var r = (65535 & n) + (65535 & t);
+    return (n >> 16) + (t >> 16) + (r >> 16) << 16 | 65535 & r
+  }
+  function r(n, t) {
+    return n << t | n >>> 32 - t
+  }
+  function e(n, e, o, u, c, f) {
+    return t(r(t(t(e, n), t(u, f)), c), o)
+  }
+  function o(n, t, r, o, u, c, f) {
+    return e(t & r | ~t & o, n, t, u, c, f)
+  }
+  function u(n, t, r, o, u, c, f) {
+    return e(t & o | r & ~o, n, t, u, c, f)
+  }
+  function c(n, t, r, o, u, c, f) {
+    return e(t ^ r ^ o, n, t, u, c, f)
+  }
+  function f(n, t, r, o, u, c, f) {
+    return e(r ^ (t | ~o), n, t, u, c, f)
+  }
+  function i(n, r) {
+    n[r >> 5] |= 128 << r % 32,
+      n[14 + (r + 64 >>> 9 << 4)] = r;
+    var e, i, a, d, h, l = 1732584193, g = -271733879, v = -1732584194, m = 271733878;
+    for (e = 0; e < n.length; e += 16)
+      i = l,
+        a = g,
+        d = v,
+        h = m,
+        g = f(g = f(g = f(g = f(g = c(g = c(g = c(g = c(g = u(g = u(g = u(g = u(g = o(g = o(g = o(g = o(g, v = o(v, m = o(m, l = o(l, g, v, m, n[e], 7, -680876936), g, v, n[e + 1], 12, -389564586), l, g, n[e + 2], 17, 606105819), m, l, n[e + 3], 22, -1044525330), v = o(v, m = o(m, l = o(l, g, v, m, n[e + 4], 7, -176418897), g, v, n[e + 5], 12, 1200080426), l, g, n[e + 6], 17, -1473231341), m, l, n[e + 7], 22, -45705983), v = o(v, m = o(m, l = o(l, g, v, m, n[e + 8], 7, 1770035416), g, v, n[e + 9], 12, -1958414417), l, g, n[e + 10], 17, -42063), m, l, n[e + 11], 22, -1990404162), v = o(v, m = o(m, l = o(l, g, v, m, n[e + 12], 7, 1804603682), g, v, n[e + 13], 12, -40341101), l, g, n[e + 14], 17, -1502002290), m, l, n[e + 15], 22, 1236535329), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 1], 5, -165796510), g, v, n[e + 6], 9, -1069501632), l, g, n[e + 11], 14, 643717713), m, l, n[e], 20, -373897302), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 5], 5, -701558691), g, v, n[e + 10], 9, 38016083), l, g, n[e + 15], 14, -660478335), m, l, n[e + 4], 20, -405537848), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 9], 5, 568446438), g, v, n[e + 14], 9, -1019803690), l, g, n[e + 3], 14, -187363961), m, l, n[e + 8], 20, 1163531501), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 13], 5, -1444681467), g, v, n[e + 2], 9, -51403784), l, g, n[e + 7], 14, 1735328473), m, l, n[e + 12], 20, -1926607734), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 5], 4, -378558), g, v, n[e + 8], 11, -2022574463), l, g, n[e + 11], 16, 1839030562), m, l, n[e + 14], 23, -35309556), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 1], 4, -1530992060), g, v, n[e + 4], 11, 1272893353), l, g, n[e + 7], 16, -155497632), m, l, n[e + 10], 23, -1094730640), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 13], 4, 681279174), g, v, n[e], 11, -358537222), l, g, n[e + 3], 16, -722521979), m, l, n[e + 6], 23, 76029189), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 9], 4, -640364487), g, v, n[e + 12], 11, -421815835), l, g, n[e + 15], 16, 530742520), m, l, n[e + 2], 23, -995338651), v = f(v, m = f(m, l = f(l, g, v, m, n[e], 6, -198630844), g, v, n[e + 7], 10, 1126891415), l, g, n[e + 14], 15, -1416354905), m, l, n[e + 5], 21, -57434055), v = f(v, m = f(m, l = f(l, g, v, m, n[e + 12], 6, 1700485571), g, v, n[e + 3], 10, -1894986606), l, g, n[e + 10], 15, -1051523), m, l, n[e + 1], 21, -2054922799), v = f(v, m = f(m, l = f(l, g, v, m, n[e + 8], 6, 1873313359), g, v, n[e + 15], 10, -30611744), l, g, n[e + 6], 15, -1560198380), m, l, n[e + 13], 21, 1309151649), v = f(v, m = f(m, l = f(l, g, v, m, n[e + 4], 6, -145523070), g, v, n[e + 11], 10, -1120210379), l, g, n[e + 2], 15, 718787259), m, l, n[e + 9], 21, -343485551),
+        l = t(l, i),
+        g = t(g, a),
+        v = t(v, d),
+        m = t(m, h);
+    return [l, g, v, m]
+  }
+  function a(n) {
+    var t, r = "", e = 32 * n.length;
+    for (t = 0; t < e; t += 8)
+      r += String.fromCharCode(n[t >> 5] >>> t % 32 & 255);
+    return r
+  }
+  function d(n) {
+    var t, r = [];
+    for (r[(n.length >> 2) - 1] = void 0,
+           t = 0; t < r.length; t += 1)
+      r[t] = 0;
+    var e = 8 * n.length;
+    for (t = 0; t < e; t += 8)
+      r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << t % 32;
+    return r
+  }
+  function h(n) {
+    return a(i(d(n), 8 * n.length))
+  }
+  function l(n, t) {
+    var r, e, o = d(n), u = [], c = [];
+    for (u[15] = c[15] = void 0,
+         o.length > 16 && (o = i(o, 8 * n.length)),
+           r = 0; r < 16; r += 1)
+      u[r] = 909522486 ^ o[r],
+        c[r] = 1549556828 ^ o[r];
+    return e = i(u.concat(d(t)), 512 + 8 * t.length),
+      a(i(c.concat(e), 640))
+  }
+  function g(n) {
+    var t, r, e = "";
+    for (r = 0; r < n.length; r += 1)
+      t = n.charCodeAt(r),
+        e += "0123456789abcdef".charAt(t >>> 4 & 15) + "0123456789abcdef".charAt(15 & t);
+    return e
+  }
+  function v(n) {
+    return unescape(encodeURIComponent(n))
+  }
+  function m(n) {
+    return h(v(n))
+  }
+  function p(n) {
+    return g(m(n))
+  }
+  function s(n, t) {
+    return l(v(n), v(t))
+  }
+  function C(n, t) {
+    return g(s(n, t))
+  }
+  function A(n, t, r) {
+    return t ? r ? s(t, n) : C(t, n) : r ? m(n) : p(n)
+  }
+  $.md5 = A
+}(this);
 
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const randomCount = $.isNode() ? 20 : 5;
-const inviteCodes = [`40cd108f-9eed-4897-b795-45a5b221cd6b@49efb480-d6d7-456b-a4e0-14b170b161e0@`,'9d4262a5-1a02-4ae7-8a86-8d070d531464@687b14e0-ce0a-45eb-bf46-71aa0da05f18'];
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
@@ -40,9 +133,10 @@ if ($.isNode()) {
 } else {
   cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
 }
-const JD_API_HOST = 'https://digital-floor.m.jd.com/adf/index/';
+const JD_API_HOST = 'https://starsingle.m.jd.com/guardianstar/';
+const inviteCodes = ['65561ad5-af72-4d1c-a5be-37b3de372b67@2d5f579d-e6d1-479e-931f-c275d602caf5@a3551e1d-fb07-40f0-b9ad-d50e4b480098@696cfa20-3719-442a-a331-0e07beaeb375@718868ed-2202-465d-b3a4-54e76b30d02a','65561ad5-af72-4d1c-a5be-37b3de372b67@2d5f579d-e6d1-479e-931f-c275d602caf5']
 !(async () => {
-  await requireConfig()
+  await requireConfig();
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
     return;
@@ -67,8 +161,8 @@ const JD_API_HOST = 'https://digital-floor.m.jd.com/adf/index/';
         }
         continue
       }
-      await shareCodesFormat()
-      await jdDigitalFloor()
+      await shareCodesFormat();
+      await jdHealth()
     }
   }
 })()
@@ -78,27 +172,34 @@ const JD_API_HOST = 'https://digital-floor.m.jd.com/adf/index/';
     .finally(() => {
       $.done();
     })
-async function jdDigitalFloor() {
+async function jdHealth() {
   $.bean = 0
-  await helpFriends()
-  await getUserInfo()
-  await getTaskList()
-  await showMsg()
+  await helpFriends();
+  await taskList();
+  message += `已做完任务，共计获得京豆 ${$.bean}\n`
+  await showMsg();
+}
+
+function showMsg() {
+  return new Promise(resolve => {
+    if (!jdNotify) {
+      $.msg($.name, '', `${message}`);
+    } else {
+      $.log(`京东账号${$.index}${$.nickName}\n${message}`);
+    }
+    resolve()
+  })
 }
 async function helpFriends() {
   for (let code of $.newShareCodes) {
     if (!code) continue
-    let res = await doSupport(code);
-    await $.wait(500)
-    if (res===5) {
-      // 助力次数已用完
-      break
-    }
+    const helpRes = await helpFriend(code);
   }
 }
-function doSupport(shareId) {
+
+function taskList(get=1) {
   return new Promise(resolve => {
-    $.post(taskPostUrl('doSupport',`shareId=${shareId}`), async (err, resp, data) => {
+    $.get(taskUrl("getHomePage", ), async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -106,97 +207,46 @@ function doSupport(shareId) {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
-            if (data.code === 200) {
-              console.log(`助力好友${shareId}成功`)
-              await supportCheck(shareId)
-            }else{
-              console.log(`助力好友失败，${data.msg}`)
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data.data);
-      }
-    })
-  })
-}
-function supportCheck(shareId) {
-  return new Promise(resolve => {
-    $.post(taskPostUrl('supportCheck',`shareId=${shareId}`), (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (safeGet(data)) {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              console.log(`检查助力，助力好友${shareId}成功`)
-            }else{
-              console.log(`检查助力失败，${data.msg}`)
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-function showMsg() {
-  return new Promise(resolve => {
-    $.msg($.name, '', `【京东账号${$.index}】${$.nickName}\n${message}`);
-    resolve()
-  })
-}
-function getUserInfo() {
-  return new Promise(resolve => {
-    $.get(taskUrl('shareInfo'), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (safeGet(data)) {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              $.shareId = data.data.shareId
-              console.log(`\n您的${$.name}好友助力邀请码：${data.data.shareId}\n`)
-              message += `\n您的${$.name}好友助力邀请码：${data.data.shareId}\n`
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-function getTaskList() {
-  return new Promise(resolve => {
-    $.get(taskUrl('indexInfo'), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (safeGet(data)) {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              const tasks = data.data
-              for(let i = 0; i < tasks.length; ++i){
-                const task = tasks[i]
-                console.log(`去加购物车：${task['skuName']}`)
-                await browseSku(task['skuId'])
+            let vo = data.data[0]
+            if (vo.shareId) console.log(`您的${$.name}好友助力码为：${vo.shareId}`)
+            for (let i = 0; i< vo.venueList.length;++i){
+              let venue = vo.venueList[i]
+              if(venue.venueStatus === 1) {
+                console.log(`【浏览会场】`)
+                await doTask(`starId=PUBG&type=venue&id=${venue.venueId}&status=1`)
+                await $.wait(10000)
+                await doTask(`starId=PUBG&type=venue&id=${venue.venueId}&status=2`)
               }
-              message += `共获得${$.bean}个京豆\n`
             }
+            for (let i = 0; i< vo.productList.length;++i){
+              let product = vo.productList[i]
+              if(product.productStatus === 1) {
+                console.log(`【浏览商品】去浏览商品 ${product.productName}`)
+                await doTask(`starId=PUBG&type=product&id=${product.productId}&status=1`)
+                await $.wait(10000)
+                await doTask(`starId=PUBG&type=product&id=${product.productId}&status=2`)
+              } if(product.productStatus === 2) {
+                console.log(`【浏览商品】浏览商品 ${product.productName}未领奖，去领奖`)
+                await doTask(`starId=PUBG&type=product&id=${product.productId}&status=2`)
+              } else{
+                console.log(`【浏览商品】${product.productName}已做过`)
+              }
+            }
+            for (let i = 0; i< vo.shopList.length;++i){
+              let shop = vo.shopList[i]
+              if(shop.shopStatus === 0 || shop.shopStatus === 1) {
+                console.log(`【关注店铺】去关注店铺 ${shop.shopName}`)
+                await doTask(`starId=PUBG&type=shop&id=${shop.shopId}&status=1`)
+                await $.wait(10000)
+                await doTask(`starId=PUBG&type=shop&id=${shop.shopId}&status=2`)
+              } if(shop.shopStatus === 2) {
+                console.log(`【关注店铺】关注店铺 ${shop.shopName}未领奖，去领奖`)
+                await doTask(`starId=PUBG&type=shop&id=${shop.shopId}&status=2`)
+              }else{
+                console.log(`【关注店铺】${shop.shopName} 已做过`)
+              }
+            }
+
           }
         }
       } catch (e) {
@@ -207,9 +257,10 @@ function getTaskList() {
     })
   })
 }
-function getPrize(skuId) {
+function helpFriend(code) {
+  let body = `shareId=${code}`
   return new Promise(resolve => {
-    $.post(taskPostUrl('getPrize',`skuId=${skuId}`), (err, resp, data) => {
+    $.post(taskPostUrl(body,'doSupport'), async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -217,11 +268,10 @@ function getPrize(skuId) {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
-            if (data.code === 200) {
-              $.bean += data.data
-              console.log(`任务领奖成功，获得${data.data}个京豆`)
+            if(data.code === 200){
+              console.log(`助力好友 ${code} 成功`)
             }else{
-              console.log(`任务领奖失败，${data.msg}`)
+              console.log(`助力好友 ${code} 失败, ${data.msg}`)
             }
           }
         }
@@ -233,9 +283,9 @@ function getPrize(skuId) {
     })
   })
 }
-function browseSku(skuId) {
+function doTask(body) {
   return new Promise(resolve => {
-    $.post(taskPostUrl('browseSku',`skuId=${skuId}`), async (err, resp, data) => {
+    $.post(taskPostUrl(body), async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -243,12 +293,18 @@ function browseSku(skuId) {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
-            if (data.code === 200) {
-              console.log(`任务领取成功`)
-              await $.wait(5000)
-              await getPrize(skuId)
+            if (data.code === 200){
+              if(data.data.bean){
+                console.log(`任务完成，获得京豆 ${data.data.bean}`)
+                message += `任务完成，获得京豆 ${data.data.bean}\n`
+                $.bean += data.data.bean
+              } else{
+                console.log(`任务领取完成`)
+              }
+            } else if(data.code === 1005){
+              console.log(`任务已做过`)
             } else{
-              console.log(data)
+              console.log(`未知错误，${data.msg}`)
             }
           }
         }
@@ -258,6 +314,30 @@ function browseSku(skuId) {
         resolve();
       }
     })
+  })
+}
+function readShareCode() {
+  console.log(`开始`)
+  return new Promise(async resolve => {
+    $.get({url: `http://api.turinglabs.net/api/v1/jd/jdapple/read/${randomCount}/`}, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            console.log(`随机取${randomCount}个码放到您固定的互助码后面`)
+            data = JSON.parse(data);
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+    // await $.wait(2000);
+    // resolve()
   })
 }
 //格式化助力码
@@ -298,45 +378,72 @@ function requireConfig() {
     resolve()
   })
 }
-function taskPostUrl(function_id, body) {
+function getTs() {
+  return new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000
+}
+function sign(t,e,n) {
+  var a = ""
+    , i = n.split("?")[1] || "";
+  if (t) {
+    if ("string" == typeof t)
+      a = t + i;
+    else if ("object" == typeof (t)) {
+      var r = [];
+      for (var s in t)
+        r.push(s + "=" + t[s]);
+      a = r.length ? r.join("&") + i : i
+    }
+  } else
+    a = i;
+  if (a) {
+    var o = a.split("&").sort().join("");
+    return $.md5(o + e)
+  }
+  return $.md5(e)
+}
+
+function taskUrl(function_id, body = {}) {
+  let t = getTs()
   return {
-    url: `${JD_API_HOST}${function_id}?t=${new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000}`,
-    body: body,
+    url: `${JD_API_HOST}${function_id}?t=${t}`,
     headers: {
-      'Host': 'digital-floor.m.jd.com',
-      'pragma': 'no-cache',
-      'cache-control': 'no-cache',
+      "Cookie": cookie,
       'accept': 'application/json, text/plain, */*',
-      'dnt': '1',
-      'content-type': 'application/x-www-form-urlencoded',
-      'origin': 'https://pro.m.jd.com',
-      'sec-fetch-site': 'same-site',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-dest': 'empty',
-      'referer': 'https://pro.m.jd.com/',
+      'accept-encoding': 'gzip, deflate, br',
       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-      'Cookie': cookie,
-      'user-agent': 'jdapp;iPhone;9.2.0;14.0;53f4d9c70c1c81f1c8769d2fe2fef0190a3f60d2;network/wifi;supportApplePay/3;hasUPPay/1;pushNoticeIsOpen/0;model/iPhone10,2;addressid/138413818;hasOCPay/0;appBuild/167408;supportBestPay/1;jdSupportDarkMode/0;pv/1710.16;apprpd/WorthBuy_List;ref/JDWebViewController;psq/2;ads/;psn/53f4d9c70c1c81f1c8769d2fe2fef0190a3f60d2|5870;jdv/0|kong|t_1000089893_|tuiguang|9a75f97593f344eb9c46b99e196608d2|1605846323;adk/;app_device/IOS;pap/JA2015_311210|9.2.0|IOS 14.0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',}
+      'cache-control': 'no-cache',
+      "origin": "https://starsingle.m.jd.com",
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'dnt': '1',
+      'pragma': 'no-cache',
+      'referer': 'https://starsingle.m.jd.com/static/index.html',
+      'timestamp': `${t}`,
+      'sign': sign(null,`07035cabb557f096${t}`,`/guardianstar/${function_id}?t=${t}`),
+      "User-Agent": 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88'//$.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
+    }
   }
 }
-function taskUrl(function_id) {
+function taskPostUrl(body = "{}", functionId = 'doTask') {
+  let t = getTs()
+  let url = `https://starsingle.m.jd.com/guardianstar/${functionId}`;
   return {
-    url: `${JD_API_HOST}${function_id}?t=${new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000}`,
+    url,
+    body: `${body}&t=${t}`,
     headers: {
-      'Host': 'digital-floor.m.jd.com',
-      'pragma': 'no-cache',
-      'cache-control': 'no-cache',
+      "Cookie": cookie,
       'accept': 'application/json, text/plain, */*',
-      'dnt': '1',
-      'content-type': 'application/x-www-form-urlencoded',
-      'origin': 'https://pro.m.jd.com',
-      'sec-fetch-site': 'same-site',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-dest': 'empty',
-      'referer': 'https://pro.m.jd.com/',
+      'accept-encoding': 'gzip, deflate, br',
       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-      'Cookie': cookie,
-      'user-agent': 'jdapp;iPhone;9.2.0;14.0;53f4d9c70c1c81f1c8769d2fe2fef0190a3f60d2;network/wifi;supportApplePay/3;hasUPPay/1;pushNoticeIsOpen/0;model/iPhone10,2;addressid/138413818;hasOCPay/0;appBuild/167408;supportBestPay/1;jdSupportDarkMode/0;pv/1710.16;apprpd/WorthBuy_List;ref/JDWebViewController;psq/2;ads/;psn/53f4d9c70c1c81f1c8769d2fe2fef0190a3f60d2|5870;jdv/0|kong|t_1000089893_|tuiguang|9a75f97593f344eb9c46b99e196608d2|1605846323;adk/;app_device/IOS;pap/JA2015_311210|9.2.0|IOS 14.0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',}
+      'cache-control': 'no-cache',
+      "origin": "https://starsingle.m.jd.com",
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'dnt': '1',
+      'pragma': 'no-cache',
+      'referer': 'https://starsingle.m.jd.com/static/index.html',
+      'timestamp': `${t}`,
+      'sign': sign(`${body}&t=${t}`,`07035cabb557f096${t}`,`/guardianstar/doTask`),
+      "User-Agent": 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88'//$.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
+    }
   }
 }
 function TotalBean() {
