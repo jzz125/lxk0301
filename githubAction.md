@@ -97,7 +97,7 @@
 | `JOY_FEED_COUNT`        | 宠汪汪喂食数量  | 非必须 | 控制jd_joy_feedPets.js脚本喂食数量  ,可以填的数字10,20,40,80 , 其他数字不可.              |
 | `JOY_HELP_FEED`         | 宠汪汪帮好友喂食  | 非必须 | 控制jd_joy_steal.js脚本是否给好友喂食,`false`为否,`true`为是(给好友喂食)              |
 | `JOY_RUN_FLAG`          | 宠汪汪是否赛跑  | 非必须 | 控制jd_joy.js脚本是否参加赛跑(默认参加双人赛跑),`false`为否,`true`为是，脚本默认是`true`              |
-| `JOY_TEAM_LEVEL`        | 宠汪汪参加什么级别的赛跑  | 非必须 | 控制jd_joy.js脚本参加几人的赛跑,可选数字为`2`,`10`,`50`，其中2代表参加双人PK赛，10代表参加10人突围赛，50代表参加50人挑战赛(注：此项功能在`JOY_RUN_FLAG`为true的时候才生效)              |
+| `JOY_TEAM_LEVEL`        | 宠汪汪参加什么级别的赛跑  | 非必须 | 控制jd_joy.js脚本参加几人的赛跑,可选数字为`2`,`10`,`50`，其中2代表参加双人PK赛，10代表参加10人突围赛，50代表参加50人挑战赛(注：此项功能在`JOY_RUN_FLAG`为true的时候才生效)，如若想设置不同账号参加不同类别的比赛则用&区分即可(如下三个账号：`2&10&50`)              |
 | `JD_JOY_REWARD_NAME`    | 宠汪汪积分兑换多少京豆  | 非必须 | 目前可填值为`20`或者`500`,脚本默认`20`,`0`表示不兑换京豆              |
 | `MARKET_COIN_TO_BEANS`  | 京小超兑换京豆数量  | 非必须 | 控制jd_blueCoin.js兑换京豆数量,可输入值为`20`或者`1000`的数字或者其他商品的名称,例如`碧浪洗衣凝珠`              |
 | `MARKET_REWARD_NOTIFY`  | 京小超兑换奖品推送开关  | 非必须 | 控制jd_blueCoin.js兑换奖品成功后是否静默运行, `false`为否(发送推送通知消息),`true`为是(即：不发送推送通知消息)             |
@@ -112,10 +112,13 @@
 | `SUPERMARKET_SHARECODES`|  京小超商圈互助码  | 非必须 | 填写规则请看 [jdSuperMarketShareCodes.js](https://github.com/lxk0301/jd_scripts/blob/master/jdSuperMarketShareCodes.js) 或见下方[互助码的填写规则](#互助码的填写规则) |
 | `DDFACTORY_SHARECODES`|  东东工厂互助码  | 非必须 | 填写规则请看 [jdFactoryShareCodes.js](https://github.com/lxk0301/jd_scripts/blob/master/jdFactoryShareCodes.js) 或见下方[互助码的填写规则](#互助码的填写规则) |
 | `DREAM_FACTORY_SHARE_CODES`|  京喜工厂互助码  | 非必须 | 填写规则请看 [jdDreamFactoryShareCodes.js](https://github.com/lxk0301/jd_scripts/blob/master/jdDreamFactoryShareCodes.js) 或见下方[互助码的填写规则](#互助码的填写规则) |
+| `JDZZ_SHARECODES` |  京东赚赚(jd_jdzz.js)脚本互助码  | 非必须 | 填写规则和上面类似，或见下方[互助码的填写规则](#互助码的填写规则) |
 | `TG_PROXY_HOST`   |  Telegram 代理的 IP  | 非必须 | 代理类型为 http。例子：http代理 http://127.0.0.1:1080 则填写 127.0.0.1 |
 | `TG_PROXY_PORT`   |  Telegram 代理的端口  | 非必须 | 例子：http代理 http://127.0.0.1:1080 则填写 1080 |
-| `MONEY_TREE_SELL_FRUIT` |  摇钱树是否卖出金果  | 非必须 | 控制摇钱树脚本是否自动卖出金果兑换成金币，`true`卖出，`false`不卖出，默认`true` |
+| `MONEY_TREE_SELL_FRUIT` |  摇钱树是否卖出金果  | 非必须 | 控制摇钱树脚本是否自动卖出金果兑换成金币，`true`卖出，`false`不卖出，默认`false` |
 | `FACTORAY_WANTPRODUCT_NAME` |  东东工厂心仪商品  | 非必须 | 提供心仪商品名称(请尽量填写完整和别的商品有区分度)，达到条件后兑换，如不提供则会兑换当前所选商品 |
+| `WATCH_ACCEPTBODY` |  京东看一看(jd_watch.js)脚本  | 非必须 | 抓包`functionId=discAcceptTask`(需40个，每个之间使用@符号隔开) |
+| `WATCH_DOBODY` |  京东看一看(jd_watch.js)脚本  | 非必须 | 抓包`functionId=discDoTask`(需40个，每个之间使用@符号隔开) |
 
 
 ##### 互助码的填写规则

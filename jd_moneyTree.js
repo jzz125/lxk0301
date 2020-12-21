@@ -35,6 +35,7 @@ if ($.isNode()) {
 }
 
 let jdNotify = true;//是否开启静默运行，默认true开启
+let sellFruit = false;//是否卖出金果得到金币，默认'false'不卖
 const JD_API_HOST = 'https://ms.jr.jd.com/gw/generic/uc/h5/m';
 let userInfo = null, taskInfo = [], message = '', subTitle = '', fruitTotal = 0;
 !(async () => {
@@ -121,7 +122,8 @@ function user_info() {
                   // message += `【我的金币数量】${userInfo.treeInfo.coin}\n`;
                   // message += `【距离${userInfo.treeInfo.level + 1}级摇钱树还差】${userInfo.treeInfo.progressLeft}\n`;
                 } else {
-                  $.msg($.name, `【提示】京东账号${$.index}${$.UserName}运行失败`, '此账号未实名认证或者未参与过此活动\n①如未参与活动,请先去京东app参加摇钱树活动\n入口：我的->游戏与互动->查看更多\n②如未实名认证,请进行实名认证', {"open-url": "openApp.jdMobile://"});
+                  $.log(`京东账号${$.index}${$.UserName}运行失败\n此账号未实名认证或者未参与过此活动\n①如未参与活动,请先去京东app参加摇钱树活动\n入口：我的->游戏与互动->查看更多\n②如未实名认证,请进行实名认证`)
+                  // $.msg($.name, `【提示】京东账号${$.index}${$.UserName}运行失败`, '此账号未实名认证或者未参与过此活动\n①如未参与活动,请先去京东app参加摇钱树活动\n入口：我的->游戏与互动->查看更多\n②如未实名认证,请进行实名认证', {"open-url": "openApp.jdMobile://"});
                 }
               }
             } else {
@@ -261,11 +263,11 @@ function sell() {
     }
     params.riskDeviceParam = JSON.stringify(params.riskDeviceParam);//这一步，不可省略，否则提交会报错（和login接口一样）
     console.log(`目前金果数量${fruitTotal}`)
-    if ($.isNode()) {
-        if (process.env.MONEY_TREE_SELL_FRUIT && process.env.MONEY_TREE_SELL_FRUIT === 'false') {
-            rs()
-            return
-        }
+    sellFruit = $.isNode() ? (process.env.MONEY_TREE_SELL_FRUIT ? process.env.MONEY_TREE_SELL_FRUIT : `${sellFruit}`) : ($.getdata('MONEY_TREE_SELL_FRUIT') ? $.getdata('MONEY_TREE_SELL_FRUIT') : `${sellFruit}`);
+    if (sellFruit && sellFruit === 'false') {
+      console.log(`\n设置的不卖出金果\n`)
+      rs()
+      return
     }
     if (fruitTotal > 380) {
       request('sell', params).then((sellRes) => {
@@ -654,7 +656,7 @@ function jsonParse(str) {
       return JSON.parse(str);
     } catch (e) {
       console.log(e);
-      $.msg($.name, '', '不要在BoxJS手动复制粘贴修改cookie')
+      $.msg($.name, '', '请勿随意在BoxJs输入框修改内容\n建议通过脚本去获取cookie')
       return [];
     }
   }
