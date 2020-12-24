@@ -32,7 +32,7 @@ let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭�
 let helpSelf = false // 循环助力
 let applyJdBean = 0
 let cookiesArr = [], cookie = '', message = '';
-const inviteCodes = [];
+const inviteCodes = ['aa@aa'];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
