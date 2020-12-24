@@ -32,7 +32,9 @@ let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭�
 let helpSelf = false // 循环助力
 let applyJdBean = 0
 let cookiesArr = [], cookie = '', message = '';
-const inviteCodes = ['aa@aa'];
+const inviteCodes = ['RrLK2CZ8TfgzFkpb5hpD2Kt9zd5YaBeE@8rx1L6dRSzVux1mBpLJzCg==',
+                     'c0to5zbYMoe6g7eWLZDuDQ==@8rx1L6dRSzVux1mBpLJzCg==',
+                     'c0to5zbYMoe6g7eWLZDuDQ==@RrLK2CZ8TfgzFkpb5hpD2Kt9zd5YaBeE'];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
