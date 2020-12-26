@@ -12,7 +12,7 @@ let PlantBeanShareCodes = [
   'h74wt25lruy7mhpsbomlwaanca@xmblfgd3rmwo5doeiajwqluoem7qqv2anxkhtyy',//账号二的好友shareCode，不同好友中间用@符号隔开
   'h74wt25lruy7mhpsbomlwaanca@olmijoxgmjutz6tbqwjmoinybtlptbgr563rrwq'
 ]
-// 判断github action里面是否有东东萌宠互助码
+// 判断github action里面是否有种豆得豆互助码
 if (process.env.PLANT_BEAN_SHARECODES) {
   if (process.env.PLANT_BEAN_SHARECODES.indexOf('&') > -1) {
     console.log(`您的种豆互助码选择的是用&隔开\n`)
