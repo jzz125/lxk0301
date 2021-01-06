@@ -1,6 +1,6 @@
 /*
 东东水果:脚本更新地址 https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_fruit.js
-更新时间：2020-12-25
+更新时间：2021-1-5
 东东农场活动链接：https://h5.m.jd.com/babelDiy/Zeus/3KSjXqQabiTuD1cJ28QskrpWoBKT/index.html
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
@@ -766,24 +766,31 @@ async function clockInIn() {
 //
 async function getAwardInviteFriend() {
   await friendListInitForFarm();//查询好友列表
-  console.log(`\n今日已邀请好友${$.friendList.inviteFriendCount}个 / 每日邀请上限${$.friendList.inviteFriendMax}个`);
-  console.log(`开始删除${$.friendList.friends.length}个好友,可拿每天的邀请奖励`);
-  for (let friend of $.friendList.friends) {
-    console.log(`\n开始删除好友 [${friend.shareCode}]`);
-    const deleteFriendForFarm = await request('deleteFriendForFarm', { "shareCode": `${friend.shareCode}`,"version":8,"channel":1 });
-    if (deleteFriendForFarm && deleteFriendForFarm.code === '0') {
-      console.log(`删除好友 [${friend.shareCode}] 成功\n`);
+  console.log(`查询好友列表数据：${JSON.stringify($.friendList)}\n`)
+  if ($.friendList) {
+    console.log(`\n今日已邀请好友${$.friendList.inviteFriendCount}个 / 每日邀请上限${$.friendList.inviteFriendMax}个`);
+    console.log(`开始删除${$.friendList.friends && $.friendList.friends.length}个好友,可拿每天的邀请奖励`);
+    if ($.friendList.friends && $.friendList.friends.length > 0) {
+      for (let friend of $.friendList.friends) {
+        console.log(`\n开始删除好友 [${friend.shareCode}]`);
+        const deleteFriendForFarm = await request('deleteFriendForFarm', { "shareCode": `${friend.shareCode}`,"version":8,"channel":1 });
+        if (deleteFriendForFarm && deleteFriendForFarm.code === '0') {
+          console.log(`删除好友 [${friend.shareCode}] 成功\n`);
+        }
+      }
     }
-  }
-  await receiveFriendInvite();//为他人助力,接受邀请成为别人的好友
-  if ($.friendList.inviteFriendCount > 0) {
-    if ($.friendList.inviteFriendCount > $.friendList.inviteFriendGotAwardCount) {
-      console.log('开始领取邀请好友的奖励');
-      await awardInviteFriendForFarm();
-      console.log(`领取邀请好友的奖励结果：：${JSON.stringify($.awardInviteFriendRes)}`);
+    await receiveFriendInvite();//为他人助力,接受邀请成为别人的好友
+    if ($.friendList.inviteFriendCount > 0) {
+      if ($.friendList.inviteFriendCount > $.friendList.inviteFriendGotAwardCount) {
+        console.log('开始领取邀请好友的奖励');
+        await awardInviteFriendForFarm();
+        console.log(`领取邀请好友的奖励结果：：${JSON.stringify($.awardInviteFriendRes)}`);
+      }
+    } else {
+      console.log('今日未邀请过好友')
     }
   } else {
-    console.log('今日未邀请过好友')
+    console.log(`查询好友列表失败\n`);
   }
 }
 //给好友浇水
@@ -1234,7 +1241,7 @@ function readShareCode() {
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {
-            console.log(`随机取个${randomCount}码放到您固定的互助码后面`)
+            console.log(`随机取个${randomCount}码放到您固定的互助码后面(不影响已有固定互助)`)
             data = JSON.parse(data);
           }
         }
