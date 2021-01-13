@@ -6,7 +6,7 @@ name: jd_bookshop
 on:
   workflow_dispatch:
   schedule:
-    - cron: '5 4,10,24 * * *'
+    - cron: '5 0,4,10 * * *'
   watch:
     types: started
   #提交执行
