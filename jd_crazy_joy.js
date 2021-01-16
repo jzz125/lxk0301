@@ -35,6 +35,7 @@ let cookiesArr = [], cookie = '', message = '';
 const inviteCodes = ['RrLK2CZ8TfgzFkpb5hpD2Kt9zd5YaBeE@8rx1L6dRSzVux1mBpLJzCg==',
                      'c0to5zbYMoe6g7eWLZDuDQ==@8rx1L6dRSzVux1mBpLJzCg==',
                      'c0to5zbYMoe6g7eWLZDuDQ==@RrLK2CZ8TfgzFkpb5hpD2Kt9zd5YaBeE'];
+const randomCount = $.isNode() ? 10 : 5;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -657,7 +658,7 @@ function taskUrl(functionId, body = '') {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `https://code.chiang.fun/api/v1/jd/jdcrazyjoy/read/${randomCount}/`}, (err, resp, data) => {
+    $.get({url: `https://code.chiang.fun/api/v1/jd/jdcrazyjoy/read/${randomCount}/`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

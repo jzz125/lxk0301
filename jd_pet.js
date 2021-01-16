@@ -434,7 +434,7 @@ async function showMsg() {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://api.turinglabs.net/api/v1/jd/pet/read/${randomCount}/`}, (err, resp, data) => {
+    $.get({url: `http://api.turinglabs.net/api/v1/jd/pet/read/${randomCount}/`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
