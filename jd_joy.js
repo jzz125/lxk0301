@@ -45,6 +45,7 @@ let teamLevel = `2`;//参加多少人的赛跑比赛，默认是双人赛跑，�
 // 默认 'true' 参加双人赛跑，如需关闭 ，请改成 'false';
 let joyRunFlag = true;
 let jdNotify = true;//是否开启静默运行，默认true开启
+let joyRunNotify = true;//宠汪汪赛跑获胜后是否推送通知，true推送，false不推送通知
 const JD_API_HOST = 'https://jdjoy.jd.com/pet'
 const weAppUrl = 'https://draw.jdfcloud.com//pet';
 !(async () => {
@@ -171,6 +172,7 @@ async function joinTwoPeopleRun() {
         await receiveJoyRunAward();
         console.log(`领取赛跑奖励结果：${JSON.stringify($.receiveJoyRunAwardRes)}`)
         if ($.receiveJoyRunAwardRes.success) {
+          joyRunNotify = $.isNode() ? (process.env.JOY_RUN_NOTIFY ? process.env.JOY_RUN_NOTIFY : `${joyRunNotify}`) : ($.getdata('joyRunNotify') ? $.getdata('joyRunNotify') : `${joyRunNotify}`);
           $.msg($.name, '', `【京东账号${$.index}】${$.nickName}\n太棒了，${$.name}赛跑取得获胜\n恭喜您已获得${winCoin}积分奖励`);
           if ($.isNode()) await notify.sendNotify(`${$.name} - 京东账号${$.index} - ${$.nickName}`, `京东账号${$.index}${$.nickName}\n太棒了，${$.name}赛跑取得获胜\n恭喜您已获得${winCoin}积分奖励`)
         }
