@@ -25,8 +25,6 @@ cron "10 * * * *" script-path=https://raw.githubusercontent.com/LXK9301/jd_scrip
 ============小火箭=========
 天天提鹅 = type=cron,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_daily_egg.js, cronexpr="10 * * * *", timeout=3600, enable=true
  */
-
-//0 */3 * * *
 const $ = new Env('天天提鹅');
 let cookiesArr = [], cookie = '';
 const JD_API_HOST = 'https://ms.jr.jd.com/gw/generic/uc/h5/m';
