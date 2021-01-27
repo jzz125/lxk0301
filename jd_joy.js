@@ -265,11 +265,11 @@ async function petTask() {
     }
     //每日喂狗粮
     if (item['taskType'] === 'FeedEveryDay') {
-      if (item['taskStatus'] === 'processing') {
+      if (item['receiveStatus'] === 'chance_left') {
         console.log(`\n${item['taskName']}任务进行中\n`)
       } else if (item['receiveStatus'] === 'unreceive') {
         const res = await getFood('FeedEveryDay');
-        console.log(`领取每日帮好友喂一次狗粮 狗粮结果：${res.data}`);
+        console.log(`领取每日喂狗粮 结果：${res.data}`);
       }
     }
     //

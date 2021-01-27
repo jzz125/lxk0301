@@ -108,6 +108,7 @@ async function jdNian() {
       $.hasGroup = false
       await pkTaskStealDetail()
       if ($.hasGroup) await pkInfo()
+      await helpFriendsPK()
     }
     await $.wait(2000)
     await killCouponList()
@@ -119,7 +120,7 @@ async function jdNian() {
     await $.wait(1000)
     await doTask()
     await $.wait(2000)
-    await helpFriends()
+    // await helpFriends()
     await $.wait(2000)
     await getHomeData(true)
     await showMsg()
@@ -1116,8 +1117,7 @@ function shareCodesFormat() {
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
       $.newShareCodes = inviteCodes[tempIndex].split('@');
     }
-    const readShareCodeRes = null
-    //const readShareCodeRes = await readShareCode();
+    const readShareCodeRes = await readShareCode();
     if (readShareCodeRes && readShareCodeRes.code === 200) {
       $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
     }

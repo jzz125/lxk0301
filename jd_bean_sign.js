@@ -244,10 +244,10 @@ function requireConfig() {
   return new Promise(resolve => {
     const file = 'jd_bean_sign.js';
     fs.access(file, fs.constants.W_OK, (err) => {
-      resultPath = err ? '/tmp/result.txt' : resultPath;
-      JD_DailyBonusPath = err ? '/tmp/JD_DailyBonus.js' : JD_DailyBonusPath;
-      outPutUrl = err ? '/tmp/' : outPutUrl;
-      NodeSet = err ? '/tmp/CookieSet.json' : NodeSet;
+      resultPath = err ? '/jd/result.txt' : resultPath;
+      JD_DailyBonusPath = err ? '/jd/JD_DailyBonus.js' : JD_DailyBonusPath;
+      outPutUrl = err ? '/jd/' : outPutUrl;
+      NodeSet = err ? '/jd/CookieSet.json' : NodeSet;
       resolve()
     });
   })
