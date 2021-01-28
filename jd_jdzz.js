@@ -45,7 +45,7 @@ if ($.isNode()) {
   cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-const inviteCodes = []
+const inviteCodes = [``]
 !(async () => {
   $.tuanList = []
   await requireConfig();
