@@ -186,16 +186,16 @@ async function doDailyTask() {
         }
       }
       if (item.type === 10) {
-        //关注店铺
+        //关注商品领蓝币
         if (item.taskStatus === 0) {
-          console.log('开始关注店铺')
+          console.log('关注商品')
           const itemId = item.content[item.type].itemId;
           const res = await smtgDoShopTask(item.taskId, itemId);
           console.log(`${item.subTitle}结果${JSON.stringify(res)}`);
         }
       }
       if ((item.type === 8 || item.type === 2 || item.type === 10) && item.taskStatus === 0) {
-        await doDailyTask();
+        // await doDailyTask();
       }
     }
   }
