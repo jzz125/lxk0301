@@ -100,7 +100,7 @@ const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
         console.log(`\n${$.UserName} 去给自己的下一账号 ${decodeURIComponent($.newShareCodes[(i + 1) % $.newShareCodes.length]['cookie'].match(/pt_pin=(.+?);/) && $.newShareCodes[(i + 1) % $.newShareCodes.length]['cookie'].match(/pt_pin=(.+?);/)[1])}助力，助力码为 ${code}\n`)
         await createAssistUser(code, $.createAssistUserID);
       }
-      console.log(`\n去帮助作者:lxk0301\n`)
+      console.log(`\n去帮助作者:LXK9301\n`)
       await helpFriends();
     }
   }
@@ -150,13 +150,16 @@ async function doChannelsListTask(taskId, taskType) {
 }
 async function helpFriends() {
   await updateInviteCode();
-  if (!$.inviteCodes) await updateInviteCodeCDN();
-  if (!$.inviteCodes) await updateInviteCodeCDN('https://gitee.com/lxk0301/updateTeam/raw/master/jd_updateSmallHomeInviteCode.json');
-  for (let item of $.inviteCodes.inviteCode) {
-    if (!item) continue
-    await createAssistUser(item, $.createAssistUserID);
+  // if (!$.inviteCodes) await updateInviteCodeCDN();
+  await updateInviteCodeCDN('https://gitee.com/lxk0301/updateTeam/raw/master/jd_updateSmallHomeInviteCode.json');
+  if ($.inviteCodes && $.inviteCodes['inviteCode']) {
+    for (let item of $.inviteCodes.inviteCode) {
+      if (!item) continue
+      await createAssistUser(item, $.createAssistUserID);
+    }
   }
 }
+
 async function doAllTask() {
   await queryAllTaskInfo();//获取任务详情列表$.taskList
   console.log(` 任务名称   完成进度 `)
