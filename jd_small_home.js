@@ -159,7 +159,6 @@ async function helpFriends() {
     }
   }
 }
-
 async function doAllTask() {
   await queryAllTaskInfo();//获取任务详情列表$.taskList
   console.log(` 任务名称   完成进度 `)
