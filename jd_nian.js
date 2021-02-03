@@ -345,7 +345,7 @@ function getHomeData(info = false) {
               $.secretp = null
               return
             }
-            console.log(`当前爆竹${$.userInfo.raiseInfo.remainScore}🧨，下一关需要${$.userInfo.raiseInfo.nextLevelScore - $.userInfo.raiseInfo.curLevelStartScore}🧨`)
+            console.log(`\n\n当前等级:${$.userInfo.raiseInfo.curMaxLevel}\n当前爆竹${$.userInfo.raiseInfo.remainScore}🧨，下一关需要${$.userInfo.raiseInfo.nextLevelScore - $.userInfo.raiseInfo.curLevelStartScore}🧨\n\n`)
 
             if (info) {
               message += `当前爆竹${$.userInfo.raiseInfo.remainScore}🧨\n`
@@ -620,7 +620,7 @@ function getTaskList(body = {}) {
             if (data.data.bizCode === 0) {
               if (JSON.stringify(body) === "{}") {
                 $.taskVos = data.data.result.taskVos;//任务列表
-                console.log(`您的好友助力码为${data.data.result.inviteId}`)
+                console.log(`\n\n您的好友助力码为${data.data.result.inviteId}\n\n`)
               }
               // $.userInfo = data.data.result.userInfo;
             }
@@ -839,7 +839,7 @@ function pkInfo() {
           if (safeGet(data)) {
             data = JSON.parse(data);
             if (data.code === 0 && data.data && data.data.bizCode === 0) {
-              console.log(`\n您的好友PK助力码为${data.data.result.groupInfo.groupAssistInviteId}\n注：此pk邀请码每天都变！`)
+              console.log(`\n\n您的好友PK助力码为${data.data.result.groupInfo.groupAssistInviteId}\n注：此pk邀请码每天都变！\n\n`)
               let info = data.data.result.groupPkInfo
               console.log(`预计分得:${data.data.result.groupInfo.personalAward}红包`)
               if (info.dayAward)
@@ -1171,7 +1171,8 @@ function getSpecialGiftInfo() {
         } else {
           data = JSON.parse(data);
           if (data && data.data['bizCode'] === 0) {
-            console.log(`领奖成功，获得${data.data.result.score}爆竹🧨`)
+            await collectSpecialFinalScore()
+            // console.log(`领奖成功，获得${data.data.result.score}爆竹🧨`)
           }else{
             console.log(data.data.bizMsg)
           }
@@ -1244,6 +1245,53 @@ function collectSpecialScore(taskId, itemId, actionType = null, inviteId = null,
   })
 }
 
+function collectSpecialFinalScore() {
+  let temp = {
+    "ic": 1,
+    "rnd": getRnd(),
+    "inviteId": "-1",
+    "stealId": "-1"
+  }
+  const extraData = {
+    "jj": 6,
+    "buttonid": "jmdd-react-smash_0",
+    "sceneid": "homePageh5",
+    "appid": '50073'
+  }
+  let body = {
+    ...encode(temp, $.secretp, extraData),
+    "ic" : 1,
+  }
+  return new Promise(resolve => {
+    $.post(taskPostUrl("nian_collectSpecialGift", body, "nian_collectSpecialGift"), async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data);
+            if (data.code === 0) {
+              if (data.data && data.data.bizCode === 0) {
+                if (data.data.result && data.data.result.collectInfo && data.data.result.collectInfo.score)
+                  console.log(`任务完成，获得${data.data.result.collectInfo.score}爆竹🧨`)
+                else
+                  console.log(JSON.stringify(data))
+                // $.userInfo = data.data.result.userInfo;
+              } else {
+                console.log(data.data.bizMsg)
+              }
+            }
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
