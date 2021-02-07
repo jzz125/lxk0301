@@ -145,7 +145,8 @@ function requireConfig() {
                 tokenArr.push(jdTokenNode[item] ? JSON.parse(jdTokenNode[item]) : tokenNull)
             })
         } else {
-            tokenArr.push(...[JSON.parse($.getdata('jxnc_token1')) || tokenNull, JSON.parse($.getdata('jxnc_token2')) || tokenNull])
+            let tmpTokens = JSON.parse($.getdata('jx_tokens') || '[]');
+            tokenArr.push(...tmpTokens)
         }
 
         if ($.isNode()) {
@@ -279,9 +280,16 @@ async function jdJXNC() {
     const startInfo = await getTaskList();
     if (startInfo) {
         message += `【水果名称】${startInfo.prizename}\n`;
-        if (startInfo.target <= startInfo.score) {
-            notifyBool = true;
-            message += `【成熟】水果已成熟请及时收取，deliverState：${startInfo.deliverState}\n`;
+        if (startInfo.target <= startInfo.score) { // 水滴已满
+            if (startInfo.activestatus === 2) { // 成熟未收取
+                notifyBool = true;
+                $.log(`【成熟】水果已成熟请及时收取，activestatus：${startInfo.activestatus}\n`);
+                message += `【成熟】水果已成熟请及时收取，activestatus：${startInfo.activestatus}\n`;
+            } else if (startInfo.activestatus === 0) { // 未种植（成熟已收取）
+                $.log('账号未选择种子，请先去京喜农场选择种子。\n如果选择 APP 专属种子，必须提供 token。');
+                message += '账号未选择种子，请先去京喜农场选择种子。\n如果选择 APP 专属种子，必须提供 token。\n';
+                notifyBool = notifyBool && notifyLevel >= 3;
+            }
         } else {
             let shareCodeJson = {
                 "smp": $.info.smp,
