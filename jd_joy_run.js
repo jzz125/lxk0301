@@ -45,7 +45,7 @@ let run_pins = ["被折叠的记忆33,jd_6cd93e613b0e5,jd_45a6b5953b15b,jd_66f5c
 let temp = run_pins[0].split(',')
 let fixPins = temp.splice(temp.indexOf('被折叠的记忆33'), 1);
 fixPins.push(...temp.splice(temp.indexOf('jd_6cd93e613b0e5'), 1));
-const randomPins = getRandomArrayElements(temp, 4)
+const randomPins = getRandomArrayElements(temp, 4);
 temp = [...fixPins, ...randomPins];
 run_pins = [temp.join(',')];
 // $.LKYLToken = '76fe7794c475c18711e3b47185f114b5' || $.getdata('jdJoyRunToken');
