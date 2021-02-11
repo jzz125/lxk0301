@@ -12,6 +12,13 @@ let PetShareCodes = [
   'MTAxODcxOTI2NTAwMDAwMDAyMDg4Mjk3OQ==@MTAxODExNDYxMTAwMDAwMDAwMzk0MDQxNDM=',//账号二的好友shareCode，不同好友中间用@符号隔开
   'MTAxODcxOTI2NTAwMDAwMDAyMDg4Mjk3OQ==@MTE1NDUwMTI0MDAwMDAwMDM3MDU0NjUz'
 ]
+
+// 从日志获取互助码
+const logShareCodes = require('./utils/jdShareCodes');
+if (logShareCodes.PETSHARECODES.length > 0 && !process.env.PETSHARECODES) {
+  process.env.PETSHARECODES = logShareCodes.PETSHARECODES.join('&');
+}
+
 // 判断github action里面是否有东东萌宠互助码
 if (process.env.PETSHARECODES) {
   if (process.env.PETSHARECODES.indexOf('&') > -1) {

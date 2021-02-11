@@ -12,6 +12,13 @@ let FruitShareCodes = [
   '3e18b9b5a5ce40b5b738d5ff846853fd@57c576d753154025bd1cb21a76d5a7e3',//账号二的好友shareCode，不同好友中间用@符号隔开
   '3e18b9b5a5ce40b5b738d5ff846853fd@abb9360eb0864163b9738bc548601376'
 ]
+
+// 从日志获取互助码
+const logShareCodes = require('./utils/jdShareCodes');
+if (logShareCodes.FRUITSHARECODES.length > 0 && !process.env.FRUITSHARECODES) {
+  process.env.FRUITSHARECODES = logShareCodes.FRUITSHARECODES.join('&');
+}
+
 // 判断github action里面是否有东东农场互助码
 if (process.env.FRUITSHARECODES) {
   if (process.env.FRUITSHARECODES.indexOf('&') > -1) {
